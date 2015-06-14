@@ -1,0 +1,53 @@
+--- 
+
+rpm_packages:
+  - createrepo
+  - ruby-devel
+  - git
+  - openssl-devel
+  - rpm-build
+  - gcc
+  - gcc-c++
+  - make
+  - libcurl-devel
+
+pip_packages:
+  - six
+  - awscli
+
+gem_packages:
+  - fpm
+  - librarian-puppet
+  - rake
+  - sass
+  - bundler
+
+nginx::config::names_hash_bucket_size: 128
+nginx::service_ensure: 'running'
+nginx::nginx_upstreams:
+  'jenkins':
+    ensure: present
+    members:
+      - 127.0.0.1:8080
+
+nginx::nginx_vhosts:
+  jenkins.fullstack.local:
+    listen_port: 8082
+    use_default_location: false
+
+nginx::nginx_locations:
+    'jenkins':
+      ensure: present
+      location: /
+      vhost: jenkins.fullstack.local
+      proxy: 'http://jenkins'
+      proxy_read_timeout: '90'
+      proxy_connect_timeout: '90'
+      proxy_redirect: 'off'
+      proxy_set_header:
+        - Host $host:$server_port
+        - X-Real-IP $remote_addr
+        - X-Forwarded-For $proxy_add_x_forwarded_for
+
+jenkins::configure_firewall: false
+

@@ -1,0 +1,68 @@
+FORGE
+  remote: https://forgeapi.puppetlabs.com
+  specs:
+    darin-zypprepo (1.0.2)
+    garethr-docker (4.0.2)
+      puppetlabs-apt (<= 1.8.0, >= 1.1.0)
+      puppetlabs-stdlib (>= 4.1.0)
+      stahnma-epel (>= 0.0.6)
+    jfryman-nginx (0.2.6)
+      puppetlabs-apt (< 2.0.0, >= 1.0.0)
+      puppetlabs-concat (< 2.0.0, >= 1.1.1)
+      puppetlabs-stdlib (< 5.0.0, >= 4.2.0)
+    lynxman-hiera_consul (0.1.0)
+    nanliu-staging (1.0.3)
+    puppetlabs-apt (1.8.0)
+      puppetlabs-stdlib (>= 2.2.1)
+    puppetlabs-concat (1.2.3)
+      puppetlabs-stdlib (< 5.0.0, >= 3.2.0)
+    puppetlabs-firewall (1.6.0)
+    puppetlabs-inifile (1.2.0)
+    puppetlabs-java (1.3.0)
+      puppetlabs-stdlib (>= 2.4.0)
+    puppetlabs-stdlib (4.6.0)
+    rtyler-jenkins (1.4.0)
+      darin-zypprepo (< 2.0.0, >= 1.0.1)
+      nanliu-staging (< 2.0.0, >= 1.0.0)
+      puppetlabs-apt (< 2.0.0, >= 0.0.3)
+      puppetlabs-java (< 2.0.0, >= 1.0.1)
+      puppetlabs-stdlib (< 5.0.0, >= 4.6.0)
+    stahnma-epel (1.0.2)
+
+GIT
+  remote: https://github.com/bashtoni/puppet-consul.git
+  ref: master
+  sha: 5b6feb50e288a810fe933ecdfb56936b85e0d1d8
+  specs:
+    KyleAnderson-consul (0.4.6)
+      nanliu-staging (>= 0.4.0)
+      puppetlabs-stdlib (>= 0.1.6)
+
+GIT
+  remote: https://github.com/madAndroid/puppet-jenkins_job_builder.git
+  ref: install_from_git
+  sha: 046227a1df6da270acd14e07e4770b5a6e1f035e
+  specs:
+    puppet-jenkins_job_builder (1.1.0)
+      puppetlabs-inifile (< 2.0.0, >= 1.1.0)
+      puppetlabs-stdlib (< 5.0.0, >= 3.0.0)
+
+GIT
+  remote: https://github.com/puppetlabs/puppetlabs-vcsrepo.git
+  ref: master
+  sha: 18b91b2f51a1cd8cd6911bd981e4629dd0d407e8
+  specs:
+    puppetlabs-vcsrepo (1.3.0)
+
+DEPENDENCIES
+  KyleAnderson-consul (>= 0)
+  garethr-docker (>= 0)
+  jfryman-nginx (= 0.2.6)
+  lynxman-hiera_consul (>= 0)
+  puppet-jenkins_job_builder (>= 0)
+  puppetlabs-firewall (>= 0)
+  puppetlabs-stdlib (>= 0)
+  puppetlabs-vcsrepo (>= 0)
+  rtyler-jenkins (>= 0)
+  stahnma-epel (>= 0)
+

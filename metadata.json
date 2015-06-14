@@ -1,0 +1,25 @@
+{
+  "name": "puppet-module-puppet_pipeline",
+  "version": "0.1.0",
+  "author": "as",
+  "summary": "",
+  "license": "Apache-2.0",
+  "source": "",
+  "description": "",
+  "project_page": "",
+  "issues_url": "",
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": ">= 4.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    }
+  ]
+}

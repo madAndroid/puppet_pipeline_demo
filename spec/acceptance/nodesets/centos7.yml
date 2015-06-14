@@ -1,0 +1,70 @@
+---
+docker_image_commands: &docker_image_commands
+  - sudo puppet resource yumrepo bashton baseurl='https://s3.amazonaws.com/bashton-yumrepo/el$releasever/' descr='Bashton repo' gpgcheck=0 enabled=1
+  - sudo yum -y install wget unzip daemonize git tar ruby-devel
+  - sudo gem list | grep librarian-puppet || sudo gem install librarian-puppet
+  - "[ -f /tmp/consul.zip ] || sudo wget -q https://dl.bintray.com/mitchellh/consul/0.4.1_linux_amd64.zip -O /tmp/consul.zip;
+  [ -f /usr/local/bin/consul ] || sudo unzip /tmp/consul.zip -d /usr/local/bin/;
+  [ -d /var/lib/consul/data ] || sudo mkdir -p /var/lib/consul/data"
+
+bootstrap_commands: &bootstrap
+  - "pgrep consul || sudo daemonize -p /var/run/consul.pid -o /var/lib/consul/consul.log \
+    -e /var/lib/consul/consul.err -a /usr/local/bin/consul agent -dc=local-vagrant -data-dir /var/lib/consul/data/"
+  - "/sbin/iptables -F"
+  - "sleep 3 && /usr/local/bin/consul join consul-server"
+
+node_defaults: &defaults
+  platform: el-7-x86_64
+  hypervisor: docker
+  image: beaker-centos7
+  docker_cmd: '["/usr/sbin/init"]'
+  docker_preserve_image: true
+  docker_image_commands: *docker_image_commands
+  hiera_config_file: hiera.yaml
+
+HOSTS:
+
+  consul-server:
+    <<: *defaults
+    roles:
+      - default
+      - consul
+    bootstrap_commands:
+      - |
+        cat <<EOF > /tmp/consul-bootstrap.pp
+        class { 'consul':
+          config_hash => {
+            'datacenter'  => 'local-vagrant',
+            'data_dir'    => '/opt/consul',
+            'ui_dir'      => '/opt/consul/ui',
+            'log_level'   => 'INFO',
+            'node_name'   => 'consul-server',
+            'bootstrap'   => true,
+            'server'      => true
+          }
+        }
+        EOF
+        puppet apply /tmp/consul-bootstrap.pp --modulepath=/etc/puppet/modules --hiera_config=/dev/null
+        /sbin/iptables -F
+    facter:
+      location: local
+      env: uat
+      role: consul
+
+  jenkins:
+    <<: *defaults
+    roles:
+      - jenkins
+    bootstrap_commands: *bootstrap
+    facter:
+      location: local
+      env: uat
+      role: jenkins_ci_server
+
+CONFIG:
+  type: foss
+  log_level: verbose
+  forward_ssh_agent: true
+  docker_options:
+    write_timeout: 300
+    read_timeout: 600

@@ -1,0 +1,12 @@
+FROM centos:7
+MAINTAINER "Joe Bloggs" <joe@bloggs.com>
+ENV container docker
+RUN yum -y install system-config-services initscripts
+RUN rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
+RUN yum -y install gcc ruby-devel tar git cronie sudo puppet
+RUN sed -i "s/Defaults    requiretty.*/ #Defaults    requiretty/g" /etc/sudoers
+RUN yum -y update; yum clean all
+RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
+RUN gem install librarian-puppet
+VOLUME [ "/sys/fs/cgroup" ]
+CMD ["/usr/sbin/init"]

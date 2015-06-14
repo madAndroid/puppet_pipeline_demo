@@ -1,0 +1,185 @@
+---
+
+jenkins::plugin_hash:
+  git: {}
+  git-client: {}
+  javadoc: {}
+  packer: {}
+  greenballs: {}
+  promoted-builds: {}
+  scm-api: {}
+  throttle-concurrents: {}
+  xvfb: {}
+  build-flow-plugin: {}
+  swarm: {}
+  ssh-agent: {}
+  rbenv: {}
+  ruby-runtime: {}
+  ansicolor: {}
+  flexible-publish: {}
+  envinject: {}
+  token-macro: {}
+  text-finder: {}
+  ansicolor: {}
+  build-pipeline-plugin: {}
+  parameterized-trigger: {}
+  jquery: {}
+  job-dsl: {}
+
+#jenkins_credentials_uuid: '72610a18-51ff-4926-9728-3f1cc4682da2'
+
+jenkins_credentials:
+  jenkins:
+    password: ''
+    description: jenkins
+#    uuid: "%{hiera('jenkins_credentials_uuid')}"
+    private_key_or_path: '/var/lib/jenkins/.ssh/id_rsa'
+
+
+# Jenkins Jobs Builder
+jenkins_job_builder::jobs:
+
+  puppetlabs-apache-tests:
+    delay: 120
+    config:
+      - job:
+          name: puppetlabs-apache-tests
+          description: "Runs PuppetLabs Apache unit tests"
+          project-type: freestyle
+          scm:
+            - git:
+                wipe-workspace: False
+                url: 'https://github.com/puppetlabs/puppetlabs-apache.git'
+                git-config-name: 'Andrew Stangl'
+                git-config-email: 'andrew@droid.com'
+                branches:
+                  - '*/master'
+          parameters:
+            - label:
+                name: 'centos7'
+          wrappers:
+            - ansicolor
+          builders:
+            - shell: |
+                #!/bin/bash
+                export PATH=/usr/local/bin:/var/lib/jenkins/bin:$PATH
+                bundle install
+                bundle exec rake validate && bundle exec rake lint && bundle exec rake spec SPEC_OPTS='--format documentation'
+
+  puppet_pipeline-spec-tests:
+    delay: 120
+    config:
+      - job:
+          name: puppet_pipeline-spec-tests
+          description: "Runs Puppet spec tests"
+          project-type: freestyle
+          scm:
+            - git:
+                wipe-workspace: False
+                url: 'https://github.com/madAndroid/puppet_pipeline_demo'
+                git-config-name: 'Andrew Stangl'
+                git-config-email: 'andrew@droid.com'
+                branches:
+                  - '*/master'
+          parameters:
+            - label:
+                name: 'centos7'
+          wrappers:
+            - ansicolor
+          builders:
+            - shell: |
+                #!/bin/bash
+                export PATH=/usr/local/bin:/var/lib/jenkins/bin:$PATH
+                bundle install
+                bundle exec rake test
+
+  puppet_pipeline-acceptance-tests:
+    delay: 120
+    config:
+      - job:
+          name: puppet_pipeline-acceptance-tests
+          description: "Runs Puppet acceptance tests"
+          project-type: freestyle
+          scm:
+            - git:
+                wipe-workspace: False
+                url: 'https://github.com/madAndroid/puppet_pipeline_demo'
+                git-config-name: 'Andrew Stangl'
+                git-config-email: 'andrew@droid.com'
+                branches:
+                  - '*/master'
+          parameters:
+            - label:
+                name: 'centos7'
+          wrappers:
+            - ansicolor
+          builders:
+            - shell: |
+                #!/bin/bash
+                export PATH=/usr/local/bin:/var/lib/jenkins/bin:$PATH
+                bundle install
+                bundle exec rake acceptance
+
+  puppet_pipeline-package-manifests:
+    delay: 120
+    config:
+      - job:
+          name: package-puppet-manifests
+          description: "Builds Puppet package"
+          project-type: freestyle
+          scm:
+            - git:
+                wipe-workspace: False
+                url: 'https://github.com/madAndroid/puppet_pipeline_demo'
+                git-config-name: 'Andrew Stangl'
+                git-config-email: 'andrew@droid.com'
+                branches:
+                  - '*/master'
+          wrappers:
+            - ansicolor
+          builders:
+            - shell: |
+                echo "Started running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
+                find -maxdepth 1 -type f -iname "$JOB_NAME-*.rpm" -delete
+                /usr/local/bin/librarian-puppet install
+                /usr/local/bin/fpm -s dir -t rpm -n ${JOB_NAME} -v ${BUILD_NUMBER} -a noarch --epoch 0 --iteration 1bashton -m support@bashton.com -x .tmp* -x puppet/.gitignore -x puppet/.librarian* -x */*/.git* --prefix /etc puppet
+                echo "Finished running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
+          properties:
+            - promoted-build:
+                names:
+                  - '1. DEV Deployment'
+
+  puppet_pipeline:
+    delay: 120
+    config:
+      - job:
+          name: puppet_pipeline
+          description: "Build Flow for Puppet Pipeline"
+          project-type: flow
+          dsl: |
+            build("puppet_pipeline-spec-tests")
+            build("puppet_pipeline-acceptance-tests")
+            build("package-puppet-manifests")
+
+  create-puppet_pipeline-view:
+    delay: 120
+    config:
+      - job:
+          name: create_puppet_pipeline_view
+          description: "Build Flow for Puppet Pipeline"
+          project-type: freestyle
+          builders:
+            - dsl:
+                script-text: |
+                    buildPipelineView('puppet_pipeline') {
+                        filterBuildQueue()
+                        filterExecutors()
+                        title('Puppet Project CI Pipeline')
+                        displayedBuilds(5)
+                        selectedJob('puppet_pipeline-spec-tests')
+                        alwaysAllowManualTrigger()
+                        showPipelineParameters()
+                        refreshFrequency(60)
+                    }
+                ignore-existing: "false"
+

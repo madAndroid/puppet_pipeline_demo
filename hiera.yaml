@@ -1,0 +1,25 @@
+---
+:backends: 
+  - yaml
+  - consul
+
+:logger: console
+
+:hierarchy: 
+  - "locations/%{::location}/envs/%{::env}/%{::hostname}"
+  - "locations/%{::location}/envs/%{::env}/common"
+  - "locations/%{::location}/%{::hostname}"
+  - "locations/%{::location}/common"
+  - "envs/%{::env}/%{::hostname}"
+  - "envs/%{::env}/common"
+  - "%{::hostname}"
+  - common
+
+:yaml:
+    :datadir: /vagrant/hieradata
+
+:consul:
+  :host: 127.0.0.1
+  :port: 8500
+  :paths:
+    - /v1/catalog/node
