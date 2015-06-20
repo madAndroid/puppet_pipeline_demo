@@ -28,8 +28,7 @@ mod 'puppetlabs/vcsrepo',
   :git => "https://github.com/puppetlabs/puppetlabs-vcsrepo.git"
 
 mod 'lynxman/hiera_consul'
-mod 'KyleAnderson/consul', 
-  :git => 'https://github.com/bashtoni/puppet-consul.git'
+mod 'KyleAnderson/consul'
 
 # A module from git
 # mod 'puppetlabs-ntp',

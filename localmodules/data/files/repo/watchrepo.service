@@ -1,0 +1,5 @@
+[Unit]
+Description=Watch repo for changes, run createrepo
+
+[Service]
+ExecStart=/usr/local/bin/create_repo_recursive.sh /opt/app_repo

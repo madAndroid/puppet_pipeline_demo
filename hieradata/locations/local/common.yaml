@@ -1,7 +1,15 @@
 --- 
 
+local_repo_config: |
+  [local]
+  name=Local YUM repo for app package
+  baseurl=http://10.100.10.100
+  enabled=1
+  gpgcheck=0
+  protect=0
+  priority=1
+
 rpm_packages:
-  - createrepo
   - ruby-devel
   - git
   - openssl-devel

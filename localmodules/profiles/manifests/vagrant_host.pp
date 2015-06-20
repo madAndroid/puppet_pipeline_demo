@@ -1,5 +1,4 @@
-
-class role_vagrant_host {
+class profiles::vagrant_host {
 
     class { '::firewall':
         ensure => 'stopped',
@@ -31,27 +30,9 @@ class role_vagrant_host {
     user { 'vagrant':
         ensure => present,
         groups => ['docker'],
-    } ->
-    file { '/local_repo': 
-        ensure => directory,
-        owner  => 'vagrant',
-        group  => 'vagrant',
     }
 
-    class { 'consul':
-        config_hash => {
-            'datacenter'  => 'local-vagrant',
-            'data_dir'    => '/opt/consul',
-            'ui_dir'      => '/opt/consul/ui',
-            'client_addr' => '0.0.0.0',
-            'log_level'   => 'INFO',
-            'node_name'   => 'vagranthost',
-            'bootstrap'   => true,
-            'server'      => true
-        }
-    }
-
-  ### Configure vagranthost as a Jenkins slave, to facilitate Beaker tests:
+    ### Configure vagranthost as a Jenkins slave, to facilitate Beaker tests:
 
     $jenkins = hiera_hash("jenkins", undef)
 
@@ -80,7 +61,7 @@ class role_vagrant_host {
         }
 
         file { '/var/tmp/jenkins-docker/centos7/Dockerfile':
-            source  => "puppet:///modules/role_jenkins_ci_server/centos7-Dockerfile",
+            source  => "puppet:///modules/data/jenkins/centos7-Dockerfile",
             owner   => $::jenkins::slave::slave_user,
             group   => $::jenkins::slave::slave_user,
         }->

@@ -1,0 +1,13 @@
+[Unit]
+Description=Watcher
+After=syslog.target
+
+[Service]
+Type=forking
+ExecStart=/usr/local/bin/watcher.py start
+PIDFile=/var/run/watcher.pid
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target

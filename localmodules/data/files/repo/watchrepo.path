@@ -1,0 +1,12 @@
+[Unit]
+Description=/opt/app_repo
+
+[Path]
+MakeDirectory=true
+PathModified=/opt/app_repo
+PathExists=/opt/app_repo
+DirectoryMode=755
+#Unit=watchrepo
+
+[Install]
+WantedBy=multi-user.target

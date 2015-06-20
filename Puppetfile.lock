@@ -1,6 +1,9 @@
 FORGE
   remote: https://forgeapi.puppetlabs.com
   specs:
+    KyleAnderson-consul (1.0.0)
+      nanliu-staging (< 2.0.0, >= 0.4.0)
+      puppetlabs-stdlib (< 5.0.0, >= 4.2.0)
     darin-zypprepo (1.0.2)
     garethr-docker (4.0.2)
       puppetlabs-apt (<= 1.8.0, >= 1.1.0)
@@ -30,15 +33,6 @@ FORGE
     stahnma-epel (1.0.2)
 
 GIT
-  remote: https://github.com/bashtoni/puppet-consul.git
-  ref: master
-  sha: 5b6feb50e288a810fe933ecdfb56936b85e0d1d8
-  specs:
-    KyleAnderson-consul (0.4.6)
-      nanliu-staging (>= 0.4.0)
-      puppetlabs-stdlib (>= 0.1.6)
-
-GIT
   remote: https://github.com/madAndroid/puppet-jenkins_job_builder.git
   ref: install_from_git
   sha: 046227a1df6da270acd14e07e4770b5a6e1f035e
@@ -50,7 +44,7 @@ GIT
 GIT
   remote: https://github.com/puppetlabs/puppetlabs-vcsrepo.git
   ref: master
-  sha: 18b91b2f51a1cd8cd6911bd981e4629dd0d407e8
+  sha: 4840ffbfbe2db1403979eac2e539a605917470f9
   specs:
     puppetlabs-vcsrepo (1.3.0)
 
@@ -61,8 +55,9 @@ DEPENDENCIES
   lynxman-hiera_consul (>= 0)
   puppet-jenkins_job_builder (>= 0)
   puppetlabs-firewall (>= 0)
+  puppetlabs-inifile (= 1.2.0)
   puppetlabs-stdlib (>= 0)
-  puppetlabs-vcsrepo (>= 0)
+  puppetlabs-vcsrepo (= 1.3.0, >= 0)
   rtyler-jenkins (>= 0)
   stahnma-epel (>= 0)
 

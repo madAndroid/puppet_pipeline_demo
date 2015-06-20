@@ -1,5 +1,4 @@
-
-class role_jenkins_ci_server {
+class profiles::jenkins {
 
     Exec {
         timeout     => '600',

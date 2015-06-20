@@ -3,6 +3,7 @@ fixtures:
     stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
     vcsrepo: "https://github.com/puppetlabs/puppetlabs-vcsrepo.git"
     module_data: "https://github.com/ripienaar/puppet-module-data.git"
+    consul: 'https://github.com/bashtoni/puppet-consul.git'
     jenkins:
       repo: 'https://github.com/madAndroid/puppet-jenkins.git'
       ref: 'v1.3.1'
@@ -22,10 +23,11 @@ fixtures:
       ref: '1.2.0'
 
     firewall: 'puppetlabs/firewall'
+    staging: 'nanliu/staging'
     inifile: 'puppetlabs/inifile'
+    epel: 'stahnma/epel'
 
   symlinks:
-    role_jenkins_ci_server: "#{source_dir}/localmodules/role_jenkins_ci_server"
-    role_vagrant_host: "#{source_dir}/localmodules/role_vagrant_host"
-    role_consul: "#{source_dir}/localmodules/role_consul"
-    defaults: "#{source_dir}/localmodules/defaults"
+    profiles: "#{source_dir}/localmodules/profiles"
+    roles: "#{source_dir}/localmodules/roles"
+    data: "#{source_dir}/localmodules/data"

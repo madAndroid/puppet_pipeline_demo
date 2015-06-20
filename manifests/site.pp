@@ -16,16 +16,8 @@ node default {
     notice("Environment : ${env}"        )
     notice("Role        : ${role}"       )
 
-    stage { 'initial':
-        before => Stage['main'],
-    }
-
-    class { 'defaults':
-        stage => initial,
-    }
-
     # Dispatch to the role-specific class
-    class { "role_${role}": }
+    class { "roles::${role}": }
 
     if versioncmp($::puppetversion, '3.6.2') >= 0 {
         Package {
