@@ -23,6 +23,7 @@ jenkins::plugin_hash:
   ansicolor: {}
   build-pipeline-plugin: {}
   parameterized-trigger: {}
+  nodelabelparameter: {}
   jquery: {}
   job-dsl: {}
 
