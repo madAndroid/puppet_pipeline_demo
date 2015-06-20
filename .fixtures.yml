@@ -1,6 +1,7 @@
 fixtures:
   repositories:
     stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
+    vcsrepo: "https://github.com/puppetlabs/puppetlabs-vcsrepo.git"
     module_data: "https://github.com/ripienaar/puppet-module-data.git"
     jenkins:
       repo: 'https://github.com/madAndroid/puppet-jenkins.git'
@@ -21,6 +22,7 @@ fixtures:
       ref: '1.2.0'
 
     firewall: 'puppetlabs/firewall'
+    inifile: 'puppetlabs/inifile'
 
   symlinks:
     role_jenkins_ci_server: "#{source_dir}/localmodules/role_jenkins_ci_server"

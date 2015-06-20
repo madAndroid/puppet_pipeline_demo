@@ -14,6 +14,8 @@ mod 'puppetlabs/stdlib'
 mod 'puppetlabs/firewall'
 mod 'rtyler/jenkins'
 mod 'jfryman/nginx', '0.2.6'
+mod 'puppetlabs/inifile', '1.2.0'
+mod 'puppetlabs/vcsrepo', '1.3.0'
 
 mod 'stahnma/epel'
 mod 'garethr/docker'

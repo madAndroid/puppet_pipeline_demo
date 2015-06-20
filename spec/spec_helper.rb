@@ -24,7 +24,6 @@ RSpec.configure do |c|
   # Enable colour in Jenkins
   c.color = true
   c.tty = true
-  c.module_path = 'modules:localmodules'
   c.before do
     # avoid "Only root can execute commands as other users"
     Puppet.features.stubs(:root? => true)
