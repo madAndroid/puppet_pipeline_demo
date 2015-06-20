@@ -23,4 +23,7 @@ fixtures:
     firewall: 'puppetlabs/firewall'
 
   symlinks:
-    puppet_pipeline: "#{source_dir}"
+    role_jenkins_ci_server: "#{source_dir}/localmodules/role_jenkins_ci_server"
+    role_vagrant_host: "#{source_dir}/localmodules/role_vagrant_host"
+    role_consul: "#{source_dir}/localmodules/role_consul"
+    defaults: "#{source_dir}/localmodules/defaults"
