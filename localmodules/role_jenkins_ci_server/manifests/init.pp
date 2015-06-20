@@ -1,6 +1,10 @@
 
 class role_jenkins_ci_server {
 
+    Exec {
+        timeout     => '600',
+    }
+
     class { '::jenkins': }
     class { '::nginx': }
 
@@ -29,5 +33,17 @@ class role_jenkins_ci_server {
     Jenkins_job_builder::Job <| |>
 
     Jenkins::Plugin <| |> -> Jenkins_job_builder::Job <| |>
+
+    ### curl against the jenkins api until we receive a 200
+    exec { 'wait_for_Jenkins':
+        command       => '/bin/sleep 30',
+        tries         => 5,
+        try_sleep     => 5,
+        unless        => '/usr/bin/curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/api/json | grep 200',
+        require       => Class['jenkins::service'],
+    }
+
+    Exec['wait_for_Jenkins'] -> Jenkins::Job <| |>
+    Exec['wait_for_Jenkins'] -> Jenkins_job_builder::Job <| |>
 
 }

@@ -56,9 +56,14 @@ jenkins_job_builder::jobs:
                   - '*/master'
           parameters:
             - label:
-                name: 'centos7'
+                name: node
+                default: master
           wrappers:
-            - ansicolor
+            - rbenv:
+                ruby-version: 2.0.0-p353
+                preinstall-gem-list: "bundler,rake"
+            - ansicolor:
+                colormap: vga
           builders:
             - shell: |
                 #!/bin/bash
@@ -67,7 +72,7 @@ jenkins_job_builder::jobs:
                 bundle exec rake validate && bundle exec rake lint && bundle exec rake spec SPEC_OPTS='--format documentation'
 
   puppet_pipeline-spec-tests:
-    delay: 120
+    delay: 10
     config:
       - job:
           name: puppet_pipeline-spec-tests
@@ -83,9 +88,14 @@ jenkins_job_builder::jobs:
                   - '*/master'
           parameters:
             - label:
-                name: 'centos7'
+                name: node
+                default: docker
           wrappers:
-            - ansicolor
+            - rbenv:
+                ruby-version: 2.0.0-p353
+                preinstall-gem-list: "bundler,rake"
+            - ansicolor:
+                colormap: vga
           builders:
             - shell: |
                 #!/bin/bash
@@ -94,7 +104,7 @@ jenkins_job_builder::jobs:
                 bundle exec rake test
 
   puppet_pipeline-acceptance-tests:
-    delay: 120
+    delay: 10
     config:
       - job:
           name: puppet_pipeline-acceptance-tests
@@ -110,9 +120,14 @@ jenkins_job_builder::jobs:
                   - '*/master'
           parameters:
             - label:
-                name: 'centos7'
+                name: node
+                default: docker
           wrappers:
-            - ansicolor
+            - rbenv:
+                ruby-version: 2.0.0-p353
+                preinstall-gem-list: "bundler,rake"
+            - ansicolor:
+                colormap: vga
           builders:
             - shell: |
                 #!/bin/bash
@@ -121,7 +136,7 @@ jenkins_job_builder::jobs:
                 bundle exec rake acceptance
 
   puppet_pipeline-package-manifests:
-    delay: 120
+    delay: 10
     config:
       - job:
           name: package-puppet-manifests
@@ -135,8 +150,16 @@ jenkins_job_builder::jobs:
                 git-config-email: 'andrew@droid.com'
                 branches:
                   - '*/master'
+          parameters:
+            - label:
+                name: node
+                default: master
           wrappers:
-            - ansicolor
+            - rbenv:
+                ruby-version: 2.0.0-p353
+                preinstall-gem-list: "bundler,rake"
+            - ansicolor:
+                colormap: vga
           builders:
             - shell: |
                 echo "Started running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
@@ -150,7 +173,7 @@ jenkins_job_builder::jobs:
                   - '1. DEV Deployment'
 
   puppet_pipeline:
-    delay: 120
+    delay: 10
     config:
       - job:
           name: puppet_pipeline
@@ -162,7 +185,7 @@ jenkins_job_builder::jobs:
             build("package-puppet-manifests")
 
   create-puppet_pipeline-view:
-    delay: 120
+    delay: 10
     config:
       - job:
           name: create_puppet_pipeline_view
