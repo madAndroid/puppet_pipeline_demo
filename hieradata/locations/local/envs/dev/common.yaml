@@ -41,7 +41,7 @@ jenkins_credentials:
 jenkins_job_builder::jobs:
 
   puppetlabs-apache-tests:
-    delay: 120
+    delay: 10
     config:
       - job:
           name: puppetlabs-apache-tests
@@ -134,7 +134,7 @@ jenkins_job_builder::jobs:
                 #!/bin/bash
                 export PATH=/usr/local/bin:/var/lib/jenkins/bin:$PATH
                 bundle install
-                bundle exec rake acceptance
+                BEAKER_set=centos7 bundle exec rake acceptance
 
   puppet_pipeline-package-manifests:
     delay: 10
