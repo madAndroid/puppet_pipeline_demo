@@ -26,10 +26,6 @@ RSpec.configure do |c|
       hiera_data_dir = host['hieradata_dir'] || "hieradata"
       scp_to host, "#{project_root}/#{hiera_data_dir}", "/etc/puppet" if File.exists?("#{project_root}/#{hiera_data_dir}")
 
-      ## Ensure authentication agent present (forces beaker run to fail if not available)
-      on host, "ssh-add -l"
-      on host, "echo $SSH_AUTH_SOCK"
-
       ## Install build dependencies:
       on host, "yum install -y tar gcc ruby-devel git"
 
