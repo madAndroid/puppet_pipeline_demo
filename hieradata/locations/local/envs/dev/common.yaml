@@ -27,50 +27,16 @@ jenkins::plugin_hash:
   jquery: {}
   job-dsl: {}
 
-#jenkins_credentials_uuid: '72610a18-51ff-4926-9728-3f1cc4682da2'
 
 jenkins_credentials:
   jenkins:
     password: ''
     description: jenkins
-#    uuid: "%{hiera('jenkins_credentials_uuid')}"
     private_key_or_path: '/var/lib/jenkins/.ssh/id_rsa'
 
 
 # Jenkins Jobs Builder
 jenkins_job_builder::jobs:
-
-  puppetlabs-apache-tests:
-    delay: 10
-    config:
-      - job:
-          name: puppetlabs-apache-tests
-          description: "Runs PuppetLabs Apache unit tests"
-          project-type: freestyle
-          scm:
-            - git:
-                wipe-workspace: False
-                url: 'https://github.com/puppetlabs/puppetlabs-apache.git'
-                git-config-name: 'Andrew Stangl'
-                git-config-email: 'andrew@droid.com'
-                branches:
-                  - '*/master'
-          parameters:
-            - label:
-                name: node
-                default: master
-          wrappers:
-            - rbenv:
-                ruby-version: 2.0.0-p353
-                preinstall-gem-list: "bundler,rake"
-            - ansicolor:
-                colormap: vga
-          builders:
-            - shell: |
-                #!/bin/bash
-                export PATH=/usr/local/bin:/var/lib/jenkins/bin:$PATH
-                bundle install
-                bundle exec rake validate && bundle exec rake lint && bundle exec rake spec SPEC_OPTS='--format documentation'
 
   puppet_pipeline-spec-tests:
     delay: 10
@@ -119,6 +85,10 @@ jenkins_job_builder::jobs:
                 git-config-email: 'andrew@droid.com'
                 branches:
                   - '*/master'
+          triggers:
+            - reverse:
+                  jobs: 'puppet_pipeline-spec-tests'
+                  result: 'success'
           parameters:
             - label:
                 name: node
@@ -136,11 +106,11 @@ jenkins_job_builder::jobs:
                 bundle install
                 BEAKER_set=centos7 bundle exec rake acceptance
 
-  puppet_pipeline-package-manifests:
+  puppet_pipeline:
     delay: 10
     config:
       - job:
-          name: package-puppet-manifests
+          name: puppet_pipeline
           description: "Builds Puppet package"
           project-type: freestyle
           scm:
@@ -151,10 +121,14 @@ jenkins_job_builder::jobs:
                 git-config-email: 'andrew@droid.com'
                 branches:
                   - '*/master'
+          triggers:
+            - reverse:
+                  jobs: 'puppet_pipeline-acceptance-tests'
+                  result: 'success'
           parameters:
             - label:
                 name: node
-                default: master
+                default: docker
           wrappers:
             - rbenv:
                 ruby-version: 2.0.0-p353
@@ -166,24 +140,52 @@ jenkins_job_builder::jobs:
                 echo "Started running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
                 find -maxdepth 1 -type f -iname "$JOB_NAME-*.rpm" -delete
                 /usr/local/bin/librarian-puppet install --verbose
-                /usr/local/bin/fpm -s dir -t rpm -n ${JOB_NAME} -v ${BUILD_NUMBER} -a noarch --epoch 0 --iteration 1stangl -m support@stangl.com -x .tmp* -x puppet/.gitignore -x puppet/.librarian* -x */*/.git* --prefix /etc .
+                /usr/local/bin/fpm -s dir -t rpm -n ${JOB_NAME} -v ${BUILD_NUMBER} -a noarch --epoch 0 --iteration 1droid -m support@stangl.com -x .tmp* -x puppet/.gitignore -x puppet/.librarian* -x */*/.git* --prefix /etc .
+                sudo cp *rpm /opt/repo/
                 echo "Finished running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
           properties:
             - promoted-build:
                 names:
                   - '1. DEV Deployment'
 
-  puppet_pipeline:
+  puppet_pipeline-deploy:
     delay: 10
     config:
       - job:
-          name: puppet_pipeline
-          description: "Build Flow for Puppet Pipeline"
-          project-type: flow
-          dsl: |
-            build("puppet_pipeline-spec-tests")
-            build("puppet_pipeline-acceptance-tests")
-            build("package-puppet-manifests")
+          name: puppet_pipeline-deploy
+          description: "Builds Puppet package"
+          project-type: freestyle
+          scm:
+            - git:
+                wipe-workspace: False
+                url: 'https://github.com/madAndroid/puppet_pipeline_demo'
+                git-config-name: 'Andrew Stangl'
+                git-config-email: 'andrew@droid.com'
+                branches:
+                  - '*/master'
+          triggers:
+            - reverse:
+                  jobs: 'puppet_pipeline'
+                  result: 'success'
+          parameters:
+            - label:
+                name: node
+                default: docker
+          wrappers:
+            - rbenv:
+                ruby-version: 2.0.0-p353
+                preinstall-gem-list: "bundler,rake"
+            - ansicolor:
+                colormap: vga
+          builders:
+            - shell: |
+                echo "Started running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
+                sudo yum install -y puppet_pipeline
+                echo "Finished running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
+          properties:
+            - promoted-build:
+                names:
+                  - '1. DEV Deployment'
 
   create-puppet_pipeline-view:
     delay: 10
