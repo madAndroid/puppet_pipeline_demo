@@ -186,7 +186,8 @@ jenkins_job_builder::jobs:
           builders:
             - shell: |
                 echo "Started running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
-                sudo yum install -y puppet_pipeline
+                sudo yum makecache fast
+                sudo yum install -y puppet-pipeline
                 echo "Finished running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
           properties:
             - promoted-build:
