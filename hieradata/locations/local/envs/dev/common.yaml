@@ -118,11 +118,11 @@ jenkins_job_builder::jobs:
                 bundle install
                 BEAKER_set=centos7 bundle exec rake acceptance
 
-  puppet_pipeline:
+  puppet_pipeline-rpm:
     delay: 10
     config:
       - job:
-          name: puppet_pipeline
+          name: puppet_pipeline-rpm
           description: "Builds Puppet package"
           project-type: freestyle
           scm:
@@ -152,7 +152,7 @@ jenkins_job_builder::jobs:
                 echo "Started running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
                 find -maxdepth 1 -type f -iname "$JOB_NAME-*.rpm" -delete
                 /usr/local/bin/librarian-puppet install --verbose
-                /usr/local/bin/fpm -s dir -t rpm -n ${JOB_NAME} -v ${BUILD_NUMBER} -a noarch --epoch 0 --iteration 1droid -m support@stangl.com -x .tmp* -x puppet/.gitignore -x puppet/.librarian* -x */*/.git* --prefix /etc .
+                /usr/local/bin/fpm -s dir -t rpm -n puppet-pipeline -v ${BUILD_NUMBER} -a noarch --epoch 0 --iteration 1droid -m support@stangl.com -x .tmp* -x puppet/.gitignore -x puppet/.librarian* -x */*/.git* --prefix /etc .
                 sudo cp *rpm /opt/repo/
                 echo "Finished running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
           properties:
@@ -177,7 +177,7 @@ jenkins_job_builder::jobs:
                   - '*/master'
           triggers:
             - reverse:
-                  jobs: 'puppet_pipeline'
+                  jobs: 'puppet_pipeline-rpm'
                   result: 'success'
           parameters:
             - label:
