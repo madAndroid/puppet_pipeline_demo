@@ -15,6 +15,10 @@ class profiles::default {
         require  => Package['ruby-devel','gcc','make'],
     }
 
+    class { '::sudo': }
+
+    create_resources('sudo::conf', hiera_hash('sudoconf'))
+
 #    if $role != 'consul' {
 #
 #        class { '::consul':

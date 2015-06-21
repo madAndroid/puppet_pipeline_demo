@@ -26,6 +26,7 @@ fixtures:
     staging: 'nanliu/staging'
     inifile: 'puppetlabs/inifile'
     epel: 'stahnma/epel'
+    sudo: 'saz/sudo'
 
   symlinks:
     profiles: "#{source_dir}/localmodules/profiles"

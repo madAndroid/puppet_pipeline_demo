@@ -19,6 +19,7 @@ mod 'puppetlabs/vcsrepo', '1.3.0'
 
 mod 'stahnma/epel'
 mod 'garethr/docker'
+mod 'saz/sudo'
 
 mod 'puppet/jenkins_job_builder',
     :git => "https://github.com/madAndroid/puppet-jenkins_job_builder.git",

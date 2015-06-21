@@ -60,3 +60,14 @@ nginx::nginx_locations:
 jenkins::configure_firewall: false
 jenkins::version: '1.616-1.1'
 
+sudoconf:
+  notty:
+    priority: 10
+    content: 'Defaults !requiretty'
+  vagrant:
+    priority: 20
+    content: 'vagrant ALL = NOPASSWD: ALL'
+  deploy:
+    priority: 20
+    content: 'deploy ALL=(ALL) NOPASSWD: /bin/yum *'
+
