@@ -68,7 +68,7 @@ jenkins_job_builder::jobs:
           parameters:
             - label:
                 name: node
-                default: docker
+                default: master
           wrappers:
             - rbenv:
                 ruby-version: 2.0.0-p353
