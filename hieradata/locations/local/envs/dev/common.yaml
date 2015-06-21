@@ -170,13 +170,7 @@ jenkins_job_builder::jobs:
           parameters:
             - label:
                 name: node
-                default: docker
-          wrappers:
-            - rbenv:
-                ruby-version: 2.0.0-p353
-                preinstall-gem-list: "bundler,rake"
-            - ansicolor:
-                colormap: vga
+                default: webapp
           builders:
             - shell: |
                 echo "Started running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
