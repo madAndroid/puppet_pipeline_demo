@@ -32,6 +32,18 @@ sleep 3
 /usr/local/bin/consul join 10.100.10.10
 SCRIPT
 
+jenkins_rpm = '/vagrant/jenkins-1.616-1.1.noarch.rpm'
+
+$jenkins_bootstrap = <<script
+  [ -f #{jenkins_rpm} ] && (rpm -q $(basename -s .rpm #{jenkins_rpm}) || rpm -i #{jenkins_rpm}) || true
+script
+
+boxes = [
+  { name: :docker,  ip: '10.100.10.100', role: 'docker',  env: 'dev', memory: 4096 },
+  { name: :jenkins, ip: '10.100.10.105', role: 'jenkins', env: 'dev' },
+  { name: :webapp,  ip: '10.100.10.110', role: 'webapp',  env: 'dev' }
+]
+
 Vagrant.configure('2') do |config|
 
   config.ssh.forward_agent = true
@@ -40,7 +52,6 @@ Vagrant.configure('2') do |config|
   config.vm.provider :virtualbox do |virtualbox, override|
     config.ssh.insert_key = true
     virtualbox.customize ['modifyvm', :id, '--memory', '4096']
-    config.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: ['.vagrant/', '.git/']
     override.vm.box = 'puppetlabs/centos-7.0-64-puppet'
     virtualbox.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     virtualbox.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
@@ -53,49 +64,46 @@ Vagrant.configure('2') do |config|
     d.create_args = [ "--privileged", "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro" ]
   end
 
-  vagrant_host_provision = {
-    manifests_path: 'manifests',
-    manifest_file: 'site.pp',
-    module_path: ["localmodules","modules"],
-    hiera_config_path: 'hiera.yaml',
-    options: '--verbose --show_diff',
-    facter: {
-      "location"  => "local",
-      "env"       => "dev",
-      "role"      => "vagrant_host",
-    },
-  }
+  boxes.each do |box|
 
-  # Vagrant Docker Host
-  config.vm.define "host", primary: true do |vagrant|
-    vagrant.vm.hostname = "vagranthost"
-    vagrant.vm.network "private_network", ip: "10.100.10.10"
-    vagrant.vm.network "forwarded_port", guest: 18082, host: 8082
-    vagrant.vm.provision "shell", inline: $consul_bootstrap
-    vagrant.vm.provision "shell", inline: $bootstrap
-    vagrant.vm.provision "puppet", vagrant_host_provision
-    vagrant.vm.provision "shell", inline: "cd /vagrant && vagrant up jenkins --provider=docker && vagrant provision jenkins"
-    vagrant.vm.provision "puppet", vagrant_host_provision
-  end
+    primary = box[:name] == :docker ? true : false
+    autostart = box[:name] == :docker ? true : false
 
-  # Docker Jenkins container
-  config.vm.define "jenkins", autostart: false do |jenkins|
-    jenkins.vm.hostname = "jenkins"
-    jenkins.vm.network "forwarded_port", guest: 8082, host: 18082
-    jenkins.vm.provision "shell", inline: $bootstrap
-    jenkins.vm.provision "shell", inline: $consul_client,
-      run: "always"
-    jenkins.vm.provision "puppet",
-      manifests_path: 'manifests',
-      manifest_file: 'site.pp',
-      options: '--verbose --show_diff',
-      module_path: ["localmodules","modules"],
-      hiera_config_path: 'hiera.yaml',
-      facter: {
-        "location"  => "local",
-        "env"       => "dev",
-        "role"      => "jenkins_ci_server",
-      }
+    config.vm.define box[:name], primary: primary, autostart: autostart do |node|
+
+      node.vm.network :private_network, ip: box[:ip]
+      node.vm.hostname = "#{box[:name]}"
+      node.vm.provision "shell", inline: "echo Provisioning node #{box[:name]}"
+      node.vm.provision "shell", inline: $bootstrap, run: "always"
+
+      if box[:name] == :jenkins
+        node.vm.provision "shell", inline: $jenkins_bootstrap
+        node.vm.network "forwarded_port", guest: 8082, host: 18082
+      end
+
+      if box[:name] == :docker
+        node.vm.network "forwarded_port", guest: 18082, host: 8082
+        node.vm.provision "shell", inline: $consul_bootstrap
+      else
+        node.vm.provision "shell", inline: $consul_client, run: "always"
+      end
+
+      node.vm.provision :puppet do |puppet|
+        puppet.manifests_path     = 'manifests'
+        puppet.manifest_file      = 'site.pp'
+        puppet.module_path        = ["localmodules","modules"]
+        puppet.hiera_config_path  = 'hiera.yaml'
+        puppet.options            = '--verbose --show_diff'
+        puppet.facter             = {
+          "node_name" => "#{box[:name]}",
+          "env"       => "#{box[:env]}",
+          "location"  => "local",
+          "role"      => "#{box[:role]}"
+        }
+      end
+
+    end
+
   end
 
 end
