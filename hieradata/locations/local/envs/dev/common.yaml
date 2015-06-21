@@ -38,6 +38,18 @@ jenkins_credentials:
 # Jenkins Jobs Builder
 jenkins_job_builder::jobs:
 
+
+  puppet_pipeline-flow:
+    delay: 10
+    config:
+      - job:
+          name: puppet_pipeline-flow
+          description: "Build Flow for Puppet Pipeline"
+          project-type: flow
+          dsl: |
+            build("create_puppet_pipeline_view")
+            build("puppet_pipeline-spec-tests")
+
   puppet_pipeline-spec-tests:
     delay: 10
     config:
