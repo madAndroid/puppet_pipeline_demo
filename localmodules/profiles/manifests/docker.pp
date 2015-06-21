@@ -1,4 +1,4 @@
-class profiles::vagrant_host {
+class profiles::docker {
 
     class { '::firewall':
         ensure => 'stopped',
