@@ -41,7 +41,7 @@ RSpec.configure do |c|
 
       ## We manage module installation using librarian-puppet
       on host, "gem list | grep librarian-puppet || gem install librarian-puppet #{lp_version}"
-      on host, "cd /etc/puppet && librarian-puppet install"
+      on host, "cd /etc/puppet && librarian-puppet install --verbose"
 
       ## Set facts defined in nodeset
       set_facts(host, host['facter'])

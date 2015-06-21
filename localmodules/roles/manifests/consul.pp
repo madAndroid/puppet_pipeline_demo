@@ -1,8 +1,8 @@
 class roles::consul {
 
     include profiles::default
-    include profiles::consul
+#    include profiles::consul
 
-    Class['profiles::default'] -> Class['profiles::consul']
+#    Class['profiles::default'] -> Class['profiles::consul']
 
 }
