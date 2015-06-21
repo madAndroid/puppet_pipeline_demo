@@ -165,8 +165,8 @@ jenkins_job_builder::jobs:
             - shell: |
                 echo "Started running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
                 find -maxdepth 1 -type f -iname "$JOB_NAME-*.rpm" -delete
-                /usr/local/bin/librarian-puppet install
-                /usr/local/bin/fpm -s dir -t rpm -n ${JOB_NAME} -v ${BUILD_NUMBER} -a noarch --epoch 0 --iteration 1bashton -m support@bashton.com -x .tmp* -x puppet/.gitignore -x puppet/.librarian* -x */*/.git* --prefix /etc puppet
+                /usr/local/bin/librarian-puppet install --verbose
+                /usr/local/bin/fpm -s dir -t rpm -n ${JOB_NAME} -v ${BUILD_NUMBER} -a noarch --epoch 0 --iteration 1stangl -m support@stangl.com -x .tmp* -x puppet/.gitignore -x puppet/.librarian* -x */*/.git* --prefix /etc puppet
                 echo "Finished running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
           properties:
             - promoted-build:
