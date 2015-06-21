@@ -1,6 +1,8 @@
 class roles::webapp {
 
     include profiles::default
-    #include profiles::webapp
+    include profiles::webapp
+
+    Class['profiles::default'] -> Class['profiles::webapp']
 
 }
