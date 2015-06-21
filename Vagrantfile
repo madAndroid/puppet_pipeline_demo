@@ -29,7 +29,7 @@ $consul_client= <<SCRIPT
 pgrep consul || sudo daemonize -p /var/run/consul.pid -o /var/lib/consul/consul.log \
   -e /var/lib/consul/consul.err -a /usr/local/bin/consul agent -dc=local-vagrant -data-dir /var/lib/consul/data/
 sleep 3
-/usr/local/bin/consul join 10.100.10.10
+/usr/local/bin/consul join 10.100.10.100
 SCRIPT
 
 jenkins_rpm = '/vagrant/jenkins-1.616-1.1.noarch.rpm'
