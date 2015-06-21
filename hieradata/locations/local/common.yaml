@@ -58,4 +58,5 @@ nginx::nginx_locations:
         - X-Forwarded-For $proxy_add_x_forwarded_for
 
 jenkins::configure_firewall: false
+jenkins::version: '1.616-1.1'
 
