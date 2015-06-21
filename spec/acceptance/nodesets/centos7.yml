@@ -61,16 +61,6 @@ HOSTS:
       env: uat
       role: jenkins
 
-  webapp:
-    <<: *defaults
-    roles:
-      - webapp
-    bootstrap_commands: *bootstrap
-    facter:
-      location: local
-      env: uat
-      role: webapp
-
 CONFIG:
   type: foss
   log_level: verbose
