@@ -67,7 +67,7 @@ sudoconf:
   vagrant:
     priority: 20
     content: 'vagrant ALL = NOPASSWD: ALL'
-  deploy:
+  jenkins:
     priority: 20
-    content: 'deploy ALL=(ALL) NOPASSWD: /bin/yum *'
+    content: 'jenkins ALL=(ALL) NOPASSWD: ALL'
 
