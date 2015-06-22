@@ -151,7 +151,7 @@ jenkins_job_builder::jobs:
             - shell: |
                 echo "Started running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
                 TMP_DIR=/var/tmp/${JOB_NAME}
-                [ -d $TMP_DIR ] && sudo find $TMP_DIR -maxdepth 1 -type f -iname "$JOB_NAME-*.rpm" -delete
+                [ -d $TMP_DIR ] && sudo find $TMP_DIR -maxdepth 1 -type f -iname "*.rpm" -delete
                 sudo rm -Rf puppet $TMP_DIR/puppet
                 /usr/local/bin/librarian-puppet install --verbose
                 sudo mkdir -p $TMP_DIR/puppet
