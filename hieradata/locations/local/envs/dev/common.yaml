@@ -150,9 +150,15 @@ jenkins_job_builder::jobs:
           builders:
             - shell: |
                 echo "Started running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
-                find -maxdepth 1 -type f -iname "$JOB_NAME-*.rpm" -delete
+                TMP_DIR=/var/tmp/${JOB_NAME}
+                [ -d $TMP_DIR ] && sudo find $TMP_DIR -maxdepth 1 -type f -iname "$JOB_NAME-*.rpm" -delete
+                sudo rm -Rf puppet $TMP_DIR/puppet
                 /usr/local/bin/librarian-puppet install --verbose
-                /usr/local/bin/fpm -s dir -t rpm -n puppet-pipeline -v ${BUILD_NUMBER} -a noarch --epoch 0 --iteration 1droid -m support@stangl.com --prefix /etc -x .tmp* -x puppet/.gitignore -x puppet/.librarian* -x */*/.git* $PWD
+                sudo mkdir -p $TMP_DIR/puppet
+                sudo chown -R $USER: $TMP_DIR
+                cp -pRf * $TMP_DIR/puppet/
+                cd $TMP_DIR
+                /usr/local/bin/fpm -s dir -t rpm -n puppet-pipeline -v ${BUILD_NUMBER} -a noarch --epoch 0 --iteration 1droid -m support@stangl.com --prefix /srv -x .tmp* -x puppet/.gitignore -x puppet/.librarian* -x */*/.git* puppet
                 sudo cp *rpm /opt/repo/
                 echo "Finished running at: $(date '+%Y-%m-%d %H:%M:%S %:z')"
           properties:
