@@ -41,6 +41,7 @@ class profiles::repo {
     file { '/etc/watcher.ini':
         source  => 'puppet:///modules/data/repo/watcher.ini',
         mode    => '0755',
+        notify  => Service['watcher'],
     }
     ->
     file { '/etc/systemd/system/watcher.service':
