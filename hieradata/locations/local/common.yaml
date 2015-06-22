@@ -68,6 +68,9 @@ sudoconf:
     priority: 20
     content: 'vagrant ALL = NOPASSWD: ALL'
   jenkins:
-    priority: 20
+    priority: 30
     content: 'jenkins ALL=(ALL) NOPASSWD: ALL'
+  jenkins-slave:
+    priority: 40
+    content: 'jenkins-slave ALL=(ALL) NOPASSWD: ALL'
 
